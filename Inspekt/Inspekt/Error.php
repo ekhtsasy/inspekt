@@ -3,6 +3,7 @@
  * Source file for Inspekt_Error
  *
  * @author Ed Finkler <coj@funkatron.com>
+ * @package Inspekt
  */
 
 /**
@@ -30,8 +31,7 @@ class Inspekt_Error {
 	 * @param integer $type  One of the PHP Error Constants (E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE)
 	 *
 	 * @link http://www.php.net/manual/en/ref.errorfunc.php#errorfunc.constants
-	 *
-	 * @todo support PHP5 exceptions without causing a syntax error
+	 * @todo support PHP5 exceptions without causing a syntax error.  Probably should use factory pattern and instantiate a different class depending on PHP version
 	 */
 	function raiseError($msg, $type=NULL) {
 		/*if (version_compare( PHP_VERSION, '5', '<' )) {

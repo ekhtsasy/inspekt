@@ -6,6 +6,8 @@
  *
  * @author Chris Shiflett <chris@shiflett.org>
  * @author Ed Finkler <coj@funkatron.com>
+ *
+ * @package Inspekt
  */
 
 
@@ -13,6 +15,11 @@
  * Inspekt_Error
  */
 require_once('Inspekt/Error.php');
+
+/**
+ * Inspekt_Input
+ */
+require_once('Inspekt/Input.php');
 
 
 /**
@@ -57,8 +64,97 @@ class Inspekt
 {
 
 	/**
+	 * Returns the $_SERVER data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputServer() {
+		$ispk_SERVER = new Inspekt_Input($_SERVER);
+		$GLOBALS['HTTP_SERVER_VARS'] = NULL;
+		return $ispk_SERVER;
+	}
+
+
+	/**
+	 * Returns the $_GET data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputGet() {
+		$ispk_GET = new Inspekt_Input($_GET);
+		$GLOBALS['HTTP_GET_VARS'] = NULL;
+		return $ispk_GET;
+	}
+
+
+	/**
+	 * Returns the $_POST data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputPost() {
+		$ispk_POST = new Inspekt_Input($_POST);
+		$GLOBALS['HTTP_POST_VARS'] = NULL;
+		return $ispk_POST;
+	}
+
+	/**
+	 * Returns the $_COOKIE data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputCookie() {
+		$ispk_COOKIE = new Inspekt_Input($_COOKIE);
+		$GLOBALS['HTTP_COOKIE_VARS'] = NULL;
+		return $ispk_COOKIE;
+	}
+
+
+	/**
+	 * Returns the $_ENV data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputEnv() {
+		$ispk_ENV = new Inspekt_Input($_ENV);
+		$GLOBALS['HTTP_ENV_VARS'] = NULL;
+		return $ispk_ENV;
+	}
+
+
+	/**
+	 * Returns the $_FILES data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputFiles() {
+		$ispk_FILES = new Inspekt_Input($_FILES);
+		$GLOBALS['HTTP_POST_FILES'] = NULL;
+		return $ispk_FILES;
+	}
+
+
+	/**
+	 * Returns the $_SESSION data wrapped in an Inspekt_Input object
+	 *
+	 * @return Inspekt_Input
+	 */
+	function getInputSession() {
+		$ispk_SESSION = new Inspekt_Input($_SESSION);
+		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
+		return $ispk_SESSION;
+	}
+
+
+
+
+
+	/**
 	 * Recursively walks an array and applies a given 'Inspektor' to every value
 	 * in the array.
+	 *
+	 * This should be considered a "protected" method, and not be called
+	 * outside of the class
 	 *
 	 * @param array $input
 	 * @param string $inspektor  The name of an "Inspektor" method, like get* or is* or no*
@@ -92,15 +188,22 @@ class Inspekt
 
 
 
+
 	/**
      * Returns only the alphabetic characters in value.
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function getAlpha($value)
 	{
-		return preg_replace('/[^[:alpha:]]/', '', $value);
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getAlpha');
+		} else {
+			return preg_replace('/[^[:alpha:]]/', '', $value);
+		}
 	}
 
 	/**
@@ -108,10 +211,16 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function getAlnum($value)
 	{
-		return preg_replace('/[^[:alnum:]]/', '', $value);
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getAlnum');
+		} else {
+			return preg_replace('/[^[:alnum:]]/', '', $value);
+		}
 	}
 
 	/**
@@ -119,10 +228,16 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function getDigits($value)
 	{
-		return preg_replace('/[^\d]/', '', $value);
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getDigits');
+		} else {
+			return preg_replace('/[^\d]/', '', $value);
+		}
 	}
 
 	/**
@@ -130,10 +245,16 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function getDir($value)
 	{
-		return dirname($value);
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getDir');
+		} else {
+			return dirname($value);
+		}
 	}
 
 	/**
@@ -141,10 +262,16 @@ class Inspekt
      *
      * @param mixed $value
      * @return int
+     *
+     * @tag filter
      */
 	function getInt($value)
 	{
-		return (int) $value;
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getInt');
+		} else {
+			return (int) $value;
+		}
 	}
 
 	/**
@@ -152,10 +279,16 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function getPath($value)
 	{
-		return realpath($value);
+		if (is_array($value)) {
+			return Inspekt::_walkArray($value, 'getPath');
+		} else {
+			return realpath($value);
+		}
 	}
 
 	/**
@@ -164,6 +297,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isAlnum($value)
 	{
@@ -176,6 +311,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isAlpha($value)
 	{
@@ -193,6 +330,8 @@ class Inspekt
      * @param mixed $max
      * @param boolean $inclusive
      * @return mixed
+     *
+     * @tag validator
      */
 	function isBetween($value, $min, $max, $inc = TRUE)
 	{
@@ -218,6 +357,8 @@ class Inspekt
      * @param mixed $value
      * @param mixed $type
      * @return mixed
+     *
+     * @tag validator
      */
 	function isCcnum($value, $type = NULL)
 	{
@@ -252,6 +393,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isDate($value)
 	{
@@ -266,6 +409,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return bool
+     *
+     * @tag validator
      */
 	function isDigits($value)
 	{
@@ -279,6 +424,8 @@ class Inspekt
      * @return mixed
      * @see RFC 2822 (http://www.ietf.org/rfc/rfc2822.txt)
      * @todo finish this method
+     *
+     * @tag validator
      */
 	function isEmail($value)
 	{
@@ -291,6 +438,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isFloat($value)
 	{
@@ -308,6 +457,8 @@ class Inspekt
      * @param mixed $value
      * @param mixed $min
      * @return mixed
+     *
+     * @tag validator
      */
 	function isGreaterThan($value, $min)
 	{
@@ -320,6 +471,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isHex($value)
 	{
@@ -336,6 +489,8 @@ class Inspekt
      * @param mixed $value
      * @param integer $allow bitfield for ISPK_HOST_ALLOW_DNS, ISPK_HOST_ALLOW_IP, ISPK_HOST_ALLOW_LOCAL
      * @return mixed
+     *
+     * @tag validator
      */
 	function isHostname($value, $allow = ISPK_HOST_ALLOW_ALL)
 	{
@@ -397,6 +552,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isInt($value)
 	{
@@ -413,6 +570,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isIp($value)
 	{
@@ -425,6 +584,8 @@ class Inspekt
      * @param mixed $value
      * @param mixed $max
      * @return mixed
+     *
+     * @tag validator
      */
 	function isLessThan($value, $max)
 	{
@@ -436,6 +597,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isOneOf($value, $allowed = NULL)
 	{
@@ -455,6 +618,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag validator
      */
 	function isPhone($value, $country = 'US')
 	{
@@ -531,12 +696,23 @@ class Inspekt
      * @param mixed $value
      * @param mixed $pattern
      * @return mixed
+     *
+     * @tag validator
      */
 	function isRegex($value, $pattern = NULL)
 	{
 		return (bool) preg_match($pattern, $value);
 	}
 
+
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $value
+	 * @return unknown
+	 *
+	 * @tag validator
+	 */
 	function isUri($value)
 	{
 		/**
@@ -551,6 +727,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return bool
+     *
+     * @tag validator
      */
 	function isZip($value)
 	{
@@ -562,6 +740,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function noTags($value)
 	{
@@ -577,6 +757,8 @@ class Inspekt
      *
      * @param mixed $value
      * @return mixed
+     *
+     * @tag filter
      */
 	function noPath($value)
 	{
