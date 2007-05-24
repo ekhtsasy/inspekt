@@ -17,7 +17,7 @@ The state of application development in PHP is worrisome.  Reviewing the NIST NV
 
 === Creating a new paradigm ===
 
-We have a strong foundation for a new paradigm in Zend_Filter_Input [http://funkatron.com/wp/wp-content/ZFI_docs.pdf http://funkatron.com/wp/wp-content/ZFI_docs.pdf], a component of the Zend Framework developed by PHP security expert Chris Shiflett [http://shiflett.org http://shiflett.org].  Disappointingly, the component was dropped from the framework, a move I and many others strongly disagreed with. After some discussions with Chris and others, I feel that the best approach would be to resurrect Zend_Filter_Input, making it framework-independent and addressing existing limitations.
+We have a strong foundation for a new paradigm in  [http://funkatron.com/wp/wp-content/ZFI_docs.pdf Zend_Filter_Input], a component of the Zend Framework developed by PHP security expert [http://shiflett.org Chris Shiflett].  Disappointingly, the component was dropped from the framework, a move I and many others strongly disagreed with. After some discussions with Chris and others, I feel that the best approach would be to resurrect [http://funkatron.com/wp/wp-content/ZFI_docs.pdf Zend_Filter_Input], making it framework-independent and addressing existing limitations.
 
 
 === The details and examples ===
@@ -27,7 +27,7 @@ Essentially, this system would act as a sort of "firewall" API between user inpu
 
 ====Usage examples====
 
-Note that in these examples, I've used the name "InputFilter" for the filter system.  This will likely change when I can come up with something snazzier.
+Note that in these examples, I've used the name "!InputFilter" for the filter system.  This will likely change when I can come up with something snazzier.
 {{{
 // Typical ZFI-style usage
 $f_post = new InputFilter($_POST);
@@ -89,7 +89,7 @@ $f_post = InputFilter::makePostFilter($restrictions);
   * Provide retrieval and filtering support for multidimensional arrays
   * Provide solutions for scoping issues (avoid the need for "global" keywords everywhere)
   * A variety of helper methods to reduce code verbosity
-  * Block deprecated HTTP_*_VARS and other ways to grab input data without filtering
+  * Block deprecated `HTTP_(GET|POST|COOKIE|SERKER|POSTFILES)_VARS` and other ways to grab input data without filtering
   * Auto-restrictions on input defined programatically or via configuration files
   * Compatible with PHP4 and PHP5
   * Self contained; not reliant on external libraries
@@ -104,9 +104,9 @@ I expect to be responsible for all development and documentation.  I will rely o
 ===Development milestones===
 _Dates assume an April 9th start_
 
-  * April 16th: Untethering the Zend_Filter_Input code from the Zend Framework
+  * April 16th: Untethering the !Zend_Filter_Input code from the Zend Framework
   * April 23rd: Rewriting PHP5-specific portions to work in PHP4
-  * May 1st: Development of approach to address scoping issues (a big plus of the $_* superglobals is that they are always available in all scopes automatically)
+  * May 1st: Development of approach to address scoping issues (a big plus of the `$_* superglobals` is that they are always available in all scopes automatically)
   * May 3rd: Initial release of code (continues throughout at appropriate points)
   * May 10th: Addition of a variety of "helper" methods to make filtered input object creation and interaction easier
   * May 20th: Addition of automatic input "restriction" filters
@@ -116,3 +116,6 @@ _Dates assume an April 9th start_
   * July 9th: PEAR channel for packaged distribution
   * Ongoing: Advocacy.  PR via interviews and news items about releases; writing articles demonstrating the system for various sources; presentations via the web and at major PHP conferences.
   * Ongoing: Work with major PHP app devs and framework devs to integrate the system -- or encourage the development of similar approaches -- within their projects.
+
+
+
