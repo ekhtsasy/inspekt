@@ -33,7 +33,7 @@ class Inspekt_Error {
 	 * @link http://www.php.net/manual/en/ref.errorfunc.php#errorfunc.constants
 	 * @todo support PHP5 exceptions without causing a syntax error.  Probably should use factory pattern and instantiate a different class depending on PHP version
 	 */
-	function raiseError($msg, $type=NULL) {
+	function raiseError($msg, $type=E_USER_WARNING) {
 		/*if (version_compare( PHP_VERSION, '5', '<' )) {
 			Inspekt_Error::raiseErrorPHP4($msg, $type);
 		} else {

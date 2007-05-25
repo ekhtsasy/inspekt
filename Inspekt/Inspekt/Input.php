@@ -13,6 +13,9 @@
  */
 require_once 'Inspekt.php';
 
+
+define ('ISPK_ARRAY_PATH_SEPARATOR', '/');
+
 /**
  * @package Inspekt
  * @todo support retrieving a key deeper than the first level
@@ -60,10 +63,10 @@ class Inspekt_Input
      */
 	function getAlpha($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getAlpha($this->_source[$key]);
+		return Inspekt::getAlpha($this->_getValue($key));
 	}
 
 	/**
@@ -76,10 +79,10 @@ class Inspekt_Input
      */
 	function getAlnum($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getAlnum($this->_source[$key]);
+		return Inspekt::getAlnum($this->_getValue($key));
 	}
 
 	/**
@@ -92,10 +95,10 @@ class Inspekt_Input
      */
 	function getDigits($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getDigits($this->_source[$key]);
+		return Inspekt::getDigits($this->_getValue($key));
 	}
 
 	/**
@@ -108,10 +111,10 @@ class Inspekt_Input
      */
 	function getDir($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getDir($this->_source[$key]);
+		return Inspekt::getDir($this->_getValue($key));
 	}
 
 	/**
@@ -124,10 +127,10 @@ class Inspekt_Input
      */
 	function getInt($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getInt($this->_source[$key]);
+		return Inspekt::getInt($this->_getValue($key));
 	}
 
 	/**
@@ -140,10 +143,10 @@ class Inspekt_Input
      */
 	function getPath($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::getPath($this->_source[$key]);
+		return Inspekt::getPath($this->_getValue($key));
 	}
 
 	/**
@@ -156,10 +159,10 @@ class Inspekt_Input
      */
 	function getRaw($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return $this->_source[$key];
+		return $this->_getValue($key);
 	}
 
 	/**
@@ -173,11 +176,11 @@ class Inspekt_Input
      */
 	function testAlnum($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isAlnum($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isAlnum($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -194,11 +197,11 @@ class Inspekt_Input
      */
 	function testAlpha($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isAlpha($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isAlpha($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -220,11 +223,11 @@ class Inspekt_Input
      */
 	function testBetween($key, $min, $max, $inc = TRUE)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isBetween($this->_source[$key], $min, $max, $inc)) {
-			return $this->_source[$key];
+		if (Inspekt::isBetween($this->_getValue($key), $min, $max, $inc)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -243,11 +246,11 @@ class Inspekt_Input
      */
 	function testCcnum($key, $type = NULL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isCcnum($this->_source[$key], $type)) {
-			return $this->_source[$key];
+		if (Inspekt::isCcnum($this->_getValue($key), $type)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -264,11 +267,11 @@ class Inspekt_Input
      */
 	function testDate($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isDate($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isDate($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -285,11 +288,11 @@ class Inspekt_Input
      */
 	function testDigits($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isDigits($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isDigits($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -305,11 +308,11 @@ class Inspekt_Input
      */
 	function testEmail($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isEmail($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isEmail($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -325,11 +328,11 @@ class Inspekt_Input
      */
 	function testFloat($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isFloat($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isFloat($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -346,11 +349,11 @@ class Inspekt_Input
      */
 	function testGreaterThan($key, $min = NULL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isGreaterThan($this->_source[$key], $min)) {
-			return $this->_source[$key];
+		if (Inspekt::isGreaterThan($this->_getValue($key), $min)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -367,11 +370,11 @@ class Inspekt_Input
      */
 	function testHex($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isHex($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isHex($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -392,11 +395,11 @@ class Inspekt_Input
      */
 	function testHostname($key, $allow = ISPK_HOST_ALLOW_ALL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isHostname($this->_source[$key], $allow)) {
-			return $this->_source[$key];
+		if (Inspekt::isHostname($this->_getValue($key), $allow)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -412,11 +415,11 @@ class Inspekt_Input
      */
 	function testInt($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isInt($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isInt($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -432,11 +435,11 @@ class Inspekt_Input
      */
 	function testIp($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isIp($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isIp($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -453,11 +456,11 @@ class Inspekt_Input
      */
 	function testLessThan($key, $max = NULL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isLessThan($this->_source[$key], $max)) {
-			return $this->_source[$key];
+		if (Inspekt::isLessThan($this->_getValue($key), $max)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -473,11 +476,11 @@ class Inspekt_Input
      */
 	function testOneOf($key, $allowed = NULL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isOneOf($this->_source[$key], $allowed)) {
-			return $this->_source[$key];
+		if (Inspekt::isOneOf($this->_getValue($key), $allowed)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -494,11 +497,11 @@ class Inspekt_Input
      */
 	function testPhone($key, $country = 'US')
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isPhone($this->_source[$key], $country)) {
-			return $this->_source[$key];
+		if (Inspekt::isPhone($this->_getValue($key), $country)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -516,11 +519,11 @@ class Inspekt_Input
      */
 	function testRegex($key, $pattern = NULL)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isRegex($this->_source[$key], $pattern)) {
-			return $this->_source[$key];
+		if (Inspekt::isRegex($this->_getValue($key), $pattern)) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -537,11 +540,11 @@ class Inspekt_Input
 	 */
 	function testUri($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isUri($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isUri($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -557,11 +560,11 @@ class Inspekt_Input
      */
 	function testZip($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		if (Inspekt::isZip($this->_source[$key])) {
-			return $this->_source[$key];
+		if (Inspekt::isZip($this->_getValue($key))) {
+			return $this->_getValue($key);
 		}
 
 		return FALSE;
@@ -577,10 +580,10 @@ class Inspekt_Input
      */
 	function noTags($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::noTags($this->_source[$key]);
+		return Inspekt::noTags($this->_getValue($key));
 	}
 
 	/**
@@ -593,10 +596,10 @@ class Inspekt_Input
      */
 	function noPath($key)
 	{
-		if (!$this->keyExists($key)) {
+		if (!$this->_keyExists($key)) {
 			return false;
 		}
-		return Inspekt::noPath($this->_source[$key]);
+		return Inspekt::noPath($this->_getValue($key));
 	}
 
 	/**
@@ -605,9 +608,72 @@ class Inspekt_Input
      * @param mixed $key
      * @return bool
      */
-	function keyExists($key)
+	function _keyExists($key)
 	{
-		return array_key_exists($key, $this->_source);
+		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR)!== FALSE) {
+			$key = trim($key, ISPK_ARRAY_PATH_SEPARATOR);
+			$keys = explode(ISPK_ARRAY_PATH_SEPARATOR, $key);
+			return $this->_keyExistsRecursive($keys, $this->_source);
+		} else {
+			return array_key_exists($key, $this->_source);
+		}
 	}
+
+
+
+	function _keyExistsRecursive($keys, $data_array, $level=0) {
+		$thiskey = current($keys);
+
+		if (is_numeric($thiskey)) { // force numeric strings to be integers
+			$thiskey = (int)$thiskey;
+		}
+
+		if ( array_key_exists($thiskey, $data_array) ) {
+			if (sizeof($keys) == 1) {
+				return true;
+			} elseif ( is_array($data_array[$thiskey]) ) {
+				unset($keys[key($keys)]);
+				$level++;
+				return $this->_keyExistsRecursive($keys, $data_array[$thiskey], $level);
+			}
+		} else { // if any key DNE, return false
+			Inspekt_Error::raiseError("Key does not exist");
+			return false;
+		}
+	}
+
+
+	function _getValue($key) {
+		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR)!== FALSE) {
+			$key = trim($key, ISPK_ARRAY_PATH_SEPARATOR);
+			$keys = explode(ISPK_ARRAY_PATH_SEPARATOR, $key);
+			return $this->_getValueRecursive($keys, $this->_source);
+		} else {
+			return $this->_getValue($key);
+		}
+	}
+
+
+
+	function _getValueRecursive($keys, $data_array, $level=0) {
+		$thiskey = current($keys);
+
+		if (is_numeric($thiskey)) { // force numeric strings to be integers
+			$thiskey = (int)$thiskey;
+		}
+
+		if ( array_key_exists($thiskey, $data_array) ) {
+			if (sizeof($keys) == 1) {
+				return $data_array[$thiskey];
+			} elseif ( is_array($data_array[$thiskey]) ) {
+				unset($keys[key($keys)]);
+				$level++;
+				return $this->_getValueRecursive($keys, $data_array[$thiskey], $level);
+			}
+		} else { // if any key DNE, return false
+			return false;
+		}
+	}
+
 
 }
