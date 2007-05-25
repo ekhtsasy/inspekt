@@ -20,3 +20,7 @@ echo "<pre>noTags:"; echo print_r($newd, true); echo "</pre>\n";
 $newd = Inspekt::getDigits($d);
 
 echo "<pre>getDigits:"; echo print_r($newd, true); echo "</pre>\n";
+
+$filter_d = new Inspekt_Input($d);
+
+echo "<pre>getAlpha('/x/woot')"; echo var_dump($filter_d->getAlpha('/x/woot')); echo "</pre>\n";
