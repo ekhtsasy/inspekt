@@ -1,6 +1,6 @@
 <?php
 /**
- * Inspekt Input - main source file
+ * Inspekt - main source file
  *
  *
  *
@@ -17,9 +17,9 @@
 require_once('Inspekt/Error.php');
 
 /**
- * Inspekt_Input
+ * Inspekt_Cage
  */
-require_once('Inspekt/Input.php');
+require_once('Inspekt/Cage.php');
 
 
 /**
@@ -64,85 +64,152 @@ class Inspekt
 {
 
 	/**
-	 * Returns the $_SERVER data wrapped in an Inspekt_Input object
+	 * Returns the $_SERVER data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * @return Inspekt_Cage
 	 */
-	function getInputServer() {
-		$ispk_SERVER = new Inspekt_Input($_SERVER);
+	function makeServerCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_SERVER);
+		}
 		$GLOBALS['HTTP_SERVER_VARS'] = NULL;
-		return $ispk_SERVER;
+		return $_instance;
 	}
 
 
 	/**
-	 * Returns the $_GET data wrapped in an Inspekt_Input object
+	 * Returns the $_GET data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputGet() {
-		$ispk_GET = new Inspekt_Input($_GET);
+	function makeGetCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_GET);
+		}
 		$GLOBALS['HTTP_GET_VARS'] = NULL;
-		return $ispk_GET;
+		return $_instance;
 	}
 
 
 	/**
-	 * Returns the $_POST data wrapped in an Inspekt_Input object
+	 * Returns the $_POST data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputPost() {
-		$ispk_POST = new Inspekt_Input($_POST);
+	function makePostCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_POST);
+		}
 		$GLOBALS['HTTP_POST_VARS'] = NULL;
-		return $ispk_POST;
+		return $_instance;
 	}
 
 	/**
-	 * Returns the $_COOKIE data wrapped in an Inspekt_Input object
+	 * Returns the $_COOKIE data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputCookie() {
-		$ispk_COOKIE = new Inspekt_Input($_COOKIE);
+	function makeCookieCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_COOKIE);
+		}
 		$GLOBALS['HTTP_COOKIE_VARS'] = NULL;
-		return $ispk_COOKIE;
+		return $_instance;
 	}
 
 
 	/**
-	 * Returns the $_ENV data wrapped in an Inspekt_Input object
+	 * Returns the $_ENV data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputEnv() {
-		$ispk_ENV = new Inspekt_Input($_ENV);
+	function makeEnvCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_ENV);
+		}
 		$GLOBALS['HTTP_ENV_VARS'] = NULL;
-		return $ispk_ENV;
+		return $_instance;
 	}
 
 
 	/**
-	 * Returns the $_FILES data wrapped in an Inspekt_Input object
+	 * Returns the $_FILES data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputFiles() {
-		$ispk_FILES = new Inspekt_Input($_FILES);
+	function makeFilesCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_FILES);
+		}
 		$GLOBALS['HTTP_POST_FILES'] = NULL;
-		return $ispk_FILES;
+		return $_instance;
 	}
 
 
 	/**
-	 * Returns the $_SESSION data wrapped in an Inspekt_Input object
+	 * Returns the $_SESSION data wrapped in an Inspekt_Cage object
 	 *
-	 * @return Inspekt_Input
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @return Inspekt_Cage
+	 * @static
 	 */
-	function getInputSession() {
-		$ispk_SESSION = new Inspekt_Input($_SESSION);
+	function makeSessionCage() {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_instance;
+
+		if (!isset($_instance)) {
+			$_instance = Inspekt_Cage::Factory($_SESSION);
+		}
 		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
-		return $ispk_SESSION;
+		return $_instance;
 	}
 
 
@@ -150,33 +217,34 @@ class Inspekt
 
 
 	/**
-	 * Recursively walks an array and applies a given 'Inspektor' to every value
-	 * in the array.
+	 * Recursively walks an array and applies a given filter method to
+	 * every value in the array.
 	 *
 	 * This should be considered a "protected" method, and not be called
 	 * outside of the class
 	 *
 	 * @param array $input
-	 * @param string $inspektor  The name of an "Inspektor" method, like get* or is* or no*
+	 * @param string $inspektor  The name of a static filtering method, like get* or no*
 	 * @return array
+	 *
 	 */
-	function _walkArray($input, $inspektor) {
+	function _walkArray($input, $method) {
 
 		if (!is_array($input)) {
 			Inspekt_Error::raiseError('$input must be an array', E_USER_ERROR);
 			return FALSE;
 		}
 
-		if ( !is_callable( array('Inspekt', $inspektor) ) ) {
-			Inspekt_Error::raiseError('$inspektor '.$inspektor.' is invalid', E_USER_ERROR);
+		if ( !is_callable( array('Inspekt', $method) ) ) {
+			Inspekt_Error::raiseError('$inspektor '.$method.' is invalid', E_USER_ERROR);
 			return FALSE;
 		}
 
 		foreach($input as $key=>$val) {
 			if (is_array($val)) {
-				$input[$key]=Inspekt::_walkArray($val, $inspektor);
+				$input[$key]=Inspekt::_walkArray($val, $method);
 			} else {
-				$val = Inspekt::$inspektor($val);
+				$val = Inspekt::$method($val);
 				$input[$key]=$val;
 			}
 		}
@@ -196,6 +264,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function getAlpha($value)
 	{
@@ -213,6 +282,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function getAlnum($value)
 	{
@@ -230,6 +300,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function getDigits($value)
 	{
@@ -247,6 +318,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function getDir($value)
 	{
@@ -459,6 +531,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isGreaterThan($value, $min)
 	{
@@ -473,6 +546,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isHex($value)
 	{
@@ -491,6 +565,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isHostname($value, $allow = ISPK_HOST_ALLOW_ALL)
 	{
@@ -554,6 +629,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isInt($value)
 	{
@@ -572,6 +648,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isIp($value)
 	{
@@ -586,6 +663,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isLessThan($value, $max)
 	{
@@ -599,6 +677,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isOneOf($value, $allowed = NULL)
 	{
@@ -620,6 +699,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isPhone($value, $country = 'US')
 	{
@@ -698,6 +778,7 @@ class Inspekt
      * @return mixed
      *
      * @tag validator
+     * @static
      */
 	function isRegex($value, $pattern = NULL)
 	{
@@ -712,6 +793,7 @@ class Inspekt
 	 * @return unknown
 	 *
 	 * @tag validator
+	 * @static
 	 */
 	function isUri($value)
 	{
@@ -729,6 +811,7 @@ class Inspekt
      * @return bool
      *
      * @tag validator
+     * @static
      */
 	function isZip($value)
 	{
@@ -742,6 +825,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function noTags($value)
 	{
@@ -759,6 +843,7 @@ class Inspekt
      * @return mixed
      *
      * @tag filter
+     * @static
      */
 	function noPath($value)
 	{

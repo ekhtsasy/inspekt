@@ -1,6 +1,6 @@
 <?php
 /**
- * Inspekt Input - main source file
+ * Inspekt Cage - main source file
  *
  * @author Chris Shiflett <chris@shiflett.org>
  * @author Ed Finkler <coj@funkatron.com>
@@ -18,13 +18,15 @@ define ('ISPK_ARRAY_PATH_SEPARATOR', '/');
 
 /**
  * @package Inspekt
- * @todo support retrieving a key deeper than the first level
  */
-class Inspekt_Input
+class Inspekt_Cage
 {
 	/**
-	 * The raw source data.  Although tempting, NEVER EVER EVER access the data
-	 * directly using this property!
+	 * {@internal The raw source data.  Although tempting, NEVER EVER
+	 * EVER access the data directly using this property!  Unfortunately,
+	 * we can't deny access to this in PHP4}
+	 *
+	 * Don't try to access this.  ever.
 	 *
 	 * @var array
 	 */
@@ -38,20 +40,58 @@ class Inspekt_Input
      *
      * @param array $source
      * @param boolean $strict
-     * @return Inspekt_Input
+     * @return Inspekt_Cage
      */
-	function Inspekt_Input(&$source, $strict = TRUE)
-	{
+	function Inspekt_Cage() {
+		// placeholder -- we're using a factory here
+	}
+
+
+
+	/**
+	 * Enter description here...
+	 *
+     * @param array $source
+     * @param boolean $strict
+     * @return Inspekt_Cage
+     *
+     * @static
+     */
+	function Factory(&$source, $strict = TRUE) {
+
 		if (!is_array($source)) {
 			Inspekt_Error::raiseError('$source is not an array', E_USER_ERROR);
 		}
 
-		$this->_source = $source;
+		$cage = new Inspekt_Cage();
+		$cage->_setSource($source);
 
 		if ($strict) {
 			$source = NULL;
 		}
+
+		return $cage;
 	}
+
+
+
+
+	/**
+	 * {@internal we use this to set the data array in Factory()
+	 *
+	 * @see Factory()
+	 * @param array $newsource
+	 */
+	function _setSource(&$newsource) {
+
+		if (!is_array($newsource)) {
+			Inspekt_Error::raiseError('$source is not an array', E_USER_ERROR);
+		}
+
+		$this->_source = $newsource;
+	}
+
+
 
 	/**
      * Returns only the alphabetic characters in value.
@@ -63,7 +103,7 @@ class Inspekt_Input
      */
 	function getAlpha($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getAlpha($this->_getValue($key));
@@ -79,7 +119,7 @@ class Inspekt_Input
      */
 	function getAlnum($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getAlnum($this->_getValue($key));
@@ -95,7 +135,7 @@ class Inspekt_Input
      */
 	function getDigits($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getDigits($this->_getValue($key));
@@ -111,7 +151,7 @@ class Inspekt_Input
      */
 	function getDir($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getDir($this->_getValue($key));
@@ -127,7 +167,7 @@ class Inspekt_Input
      */
 	function getInt($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getInt($this->_getValue($key));
@@ -143,7 +183,7 @@ class Inspekt_Input
      */
 	function getPath($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::getPath($this->_getValue($key));
@@ -159,7 +199,7 @@ class Inspekt_Input
      */
 	function getRaw($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return $this->_getValue($key);
@@ -176,7 +216,7 @@ class Inspekt_Input
      */
 	function testAlnum($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isAlnum($this->_getValue($key))) {
@@ -197,7 +237,7 @@ class Inspekt_Input
      */
 	function testAlpha($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isAlpha($this->_getValue($key))) {
@@ -223,7 +263,7 @@ class Inspekt_Input
      */
 	function testBetween($key, $min, $max, $inc = TRUE)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isBetween($this->_getValue($key), $min, $max, $inc)) {
@@ -246,7 +286,7 @@ class Inspekt_Input
      */
 	function testCcnum($key, $type = NULL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isCcnum($this->_getValue($key), $type)) {
@@ -267,7 +307,7 @@ class Inspekt_Input
      */
 	function testDate($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isDate($this->_getValue($key))) {
@@ -288,7 +328,7 @@ class Inspekt_Input
      */
 	function testDigits($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isDigits($this->_getValue($key))) {
@@ -308,7 +348,7 @@ class Inspekt_Input
      */
 	function testEmail($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isEmail($this->_getValue($key))) {
@@ -328,7 +368,7 @@ class Inspekt_Input
      */
 	function testFloat($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isFloat($this->_getValue($key))) {
@@ -349,7 +389,7 @@ class Inspekt_Input
      */
 	function testGreaterThan($key, $min = NULL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isGreaterThan($this->_getValue($key), $min)) {
@@ -370,7 +410,7 @@ class Inspekt_Input
      */
 	function testHex($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isHex($this->_getValue($key))) {
@@ -395,7 +435,7 @@ class Inspekt_Input
      */
 	function testHostname($key, $allow = ISPK_HOST_ALLOW_ALL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isHostname($this->_getValue($key), $allow)) {
@@ -415,7 +455,7 @@ class Inspekt_Input
      */
 	function testInt($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isInt($this->_getValue($key))) {
@@ -435,7 +475,7 @@ class Inspekt_Input
      */
 	function testIp($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isIp($this->_getValue($key))) {
@@ -456,7 +496,7 @@ class Inspekt_Input
      */
 	function testLessThan($key, $max = NULL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isLessThan($this->_getValue($key), $max)) {
@@ -476,7 +516,7 @@ class Inspekt_Input
      */
 	function testOneOf($key, $allowed = NULL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isOneOf($this->_getValue($key), $allowed)) {
@@ -497,7 +537,7 @@ class Inspekt_Input
      */
 	function testPhone($key, $country = 'US')
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isPhone($this->_getValue($key), $country)) {
@@ -519,7 +559,7 @@ class Inspekt_Input
      */
 	function testRegex($key, $pattern = NULL)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isRegex($this->_getValue($key), $pattern)) {
@@ -540,7 +580,7 @@ class Inspekt_Input
 	 */
 	function testUri($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isUri($this->_getValue($key))) {
@@ -560,7 +600,7 @@ class Inspekt_Input
      */
 	function testZip($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		if (Inspekt::isZip($this->_getValue($key))) {
@@ -580,7 +620,7 @@ class Inspekt_Input
      */
 	function noTags($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::noTags($this->_getValue($key));
@@ -596,7 +636,7 @@ class Inspekt_Input
      */
 	function noPath($key)
 	{
-		if (!$this->_keyExists($key)) {
+		if (!$this->keyExists($key)) {
 			return false;
 		}
 		return Inspekt::noPath($this->_getValue($key));
@@ -607,10 +647,11 @@ class Inspekt_Input
      *
      * @param mixed $key
      * @return bool
+     *
      */
-	function _keyExists($key)
+	function keyExists($key)
 	{
-		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR)!== FALSE) {
+		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR) !== FALSE) {
 			$key = trim($key, ISPK_ARRAY_PATH_SEPARATOR);
 			$keys = explode(ISPK_ARRAY_PATH_SEPARATOR, $key);
 			return $this->_keyExistsRecursive($keys, $this->_source);
@@ -621,7 +662,7 @@ class Inspekt_Input
 
 
 
-	function _keyExistsRecursive($keys, $data_array, $level=0) {
+	function _keyExistsRecursive($keys, $data_array) {
 		$thiskey = current($keys);
 
 		if (is_numeric($thiskey)) { // force numeric strings to be integers
@@ -633,11 +674,9 @@ class Inspekt_Input
 				return true;
 			} elseif ( is_array($data_array[$thiskey]) ) {
 				unset($keys[key($keys)]);
-				$level++;
-				return $this->_keyExistsRecursive($keys, $data_array[$thiskey], $level);
+				return $this->_keyExistsRecursive($keys, $data_array[$thiskey]);
 			}
 		} else { // if any key DNE, return false
-			Inspekt_Error::raiseError("Key does not exist");
 			return false;
 		}
 	}
@@ -655,7 +694,7 @@ class Inspekt_Input
 
 
 
-	function _getValueRecursive($keys, $data_array, $level=0) {
+	function _getValueRecursive($keys, $data_array) {
 		$thiskey = current($keys);
 
 		if (is_numeric($thiskey)) { // force numeric strings to be integers
@@ -667,8 +706,7 @@ class Inspekt_Input
 				return $data_array[$thiskey];
 			} elseif ( is_array($data_array[$thiskey]) ) {
 				unset($keys[key($keys)]);
-				$level++;
-				return $this->_getValueRecursive($keys, $data_array[$thiskey], $level);
+				return $this->_getValueRecursive($keys, $data_array[$thiskey]);
 			}
 		} else { // if any key DNE, return false
 			return false;
