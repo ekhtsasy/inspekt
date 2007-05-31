@@ -1,0 +1,54 @@
+#summary A set of examples and explanations to get started using Inspekt
+#labels Featured,documentation
+
+= Introduction = 
+
+Inspekt provides tools for filtering scalar or array data in two ways:
+
+  * *_Cage_ objects* that encapsulate an array and provide accessor methods that force filtering and/or validation
+    * Special helper methods allow you to set up cages on the input superglobals with one method call
+  * *Static filters and validators* for arbitrary scalar or array data
+
+The guiding principle for Inspekt is to make it easier to create secure PHP applications.  As such, 
+
+= Cage Objects = 
+
+
+
+
+
+== User Input Cages ==
+
+Inspekt has several static methods that allow you to quickly create cages for user input.  These are:
+
+{{{
+Inspekt::makeGetCage();
+Inspekt::makPostCage();
+Inspekt::makeCookieCage();
+Inspekt::makeSessionCage();
+Inspekt::makeServerCage();
+Inspekt::makeFilesCage();
+}}}
+
+Each of these methods will return an Inspekt_Cage object that contains the data from the superglobal that it is named after.  It also deletes the data in the superglobal, so that it _must_ be accessed via the cage object's methods.
+
+{{{
+// Example: creating a cage for $_POST
+require_once "Inspekt.php";
+
+$cage_POST = Inspekt::makePostCage();
+$userid = $cage_POST->getInt('userid');
+
+if ( !isset($_POST['userid']) ) {
+    echo 'Cannot access input via $_POST -- use the cage object';
+}
+}}}
+
+= Static Methods =
+
+
+
+
+
+
+
