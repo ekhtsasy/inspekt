@@ -34,12 +34,7 @@ class Inspekt_Cage
 
 
 	/**
-     * Takes an array and wraps it inside an object.  If $strict is not set to
-     * FALSE, the original array will be destroyed, and the data can only be
-     * accessed via the object's accessor methods
      *
-     * @param array $source
-     * @param boolean $strict
      * @return Inspekt_Cage
      */
 	function Inspekt_Cage() {
@@ -49,7 +44,9 @@ class Inspekt_Cage
 
 
 	/**
-	 * Enter description here...
+	 * Takes an array and wraps it inside an object.  If $strict is not set to
+     * FALSE, the original array will be destroyed, and the data can only be
+     * accessed via the object's accessor methods
 	 *
      * @param array $source
      * @param boolean $strict
@@ -77,7 +74,7 @@ class Inspekt_Cage
 
 
 	/**
-	 * {@internal we use this to set the data array in Factory()
+	 * {@internal we use this to set the data array in Factory()}
 	 *
 	 * @see Factory()
 	 * @param array $newsource
