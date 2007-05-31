@@ -32,4 +32,7 @@ echo "<pre>getDigits:"; echo var_dump($newd); echo "</pre>\n";
 
 $d_cage = Inspekt_Cage::Factory($d);
 
-echo "<pre>getAlpha('/x/woot') "; echo var_dump($d_cage->getAlpha('/x/woot')); echo "</pre>\n";
+echo "<pre>getAlpha('/x/woot') "; echo var_export($d_cage->getAlpha('/x/woot')); echo "</pre>\n";
+
+$x = $d_cage->getAlpha('x');
+echo "<pre>"; echo var_export($x); echo "</pre>\n";
