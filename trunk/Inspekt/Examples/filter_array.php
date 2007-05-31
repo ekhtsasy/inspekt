@@ -1,4 +1,13 @@
 <?php
+/**
+ * Demonstration of:
+ * - use of static filter methods on arrays
+ * - creating a cage on an arbitrary array
+ * - accessing a deep key in a multidim array with the "Array Query" approach
+ */
+
+
+set_include_path(get_include_path().PATH_SEPARATOR.dirname(dirname(__FILE__)));
 
 require_once('Inspekt.php');
 
@@ -11,16 +20,16 @@ $d['x']['woot'] = array('booyah'=>'meet at the bar at 7:30 pm',
 						'ultimate'=>'<strong>hi there!</strong>',
 						);
 
-echo "<pre>BEFORE:"; echo print_r($d, true); echo "</pre>\n";
+echo "<pre>BEFORE:"; echo var_dump($d); echo "</pre>\n";
 
 $newd = Inspekt::noTags($d);
 
-echo "<pre>noTags:"; echo print_r($newd, true); echo "</pre>\n";
+echo "<pre>noTags:"; echo var_dump($newd); echo "</pre>\n";
 
 $newd = Inspekt::getDigits($d);
 
-echo "<pre>getDigits:"; echo print_r($newd, true); echo "</pre>\n";
+echo "<pre>getDigits:"; echo var_dump($newd); echo "</pre>\n";
 
-$filter_d = new Inspekt_Input($d);
+$d_cage = Inspekt_Cage::Factory($d);
 
-echo "<pre>getAlpha('/x/woot')"; echo var_dump($filter_d->getAlpha('/x/woot')); echo "</pre>\n";
+echo "<pre>getAlpha('/x/woot') "; echo var_dump($d_cage->getAlpha('/x/woot')); echo "</pre>\n";
