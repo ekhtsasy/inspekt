@@ -1,4 +1,4 @@
-#summary The original project proposal for the OWASP Sring of Code
+#summary The original project proposal for the OWASP Spring of Code
 
 = Original OWASP Spring of Code Proposal =
 
@@ -116,6 +116,5 @@ _Dates assume an April 9th start_
   * July 9th: PEAR channel for packaged distribution
   * Ongoing: Advocacy.  PR via interviews and news items about releases; writing articles demonstrating the system for various sources; presentations via the web and at major PHP conferences.
   * Ongoing: Work with major PHP app devs and framework devs to integrate the system -- or encourage the development of similar approaches -- within their projects.
-
 
 
