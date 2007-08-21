@@ -56,6 +56,15 @@ define ('ISPK_HOST_ALLOW_LOCAL', 4);
  */
 define ('ISPK_HOST_ALLOW_ALL',   7);
 
+/**
+ * regex used to define what we're calling a valid email
+ *
+ * we're taking a "match 99%" approach here, rather than a strict
+ * interpretation of the RFC.
+ *
+ * @see http://www.regular-expressions.info/email.html
+ */
+define ('ISPK_EMAIL_VALID', '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/');
 
 /**
  * @package    Inspekt
@@ -368,7 +377,7 @@ class Inspekt
      * FALSE otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      */
@@ -382,7 +391,7 @@ class Inspekt
      * otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      */
@@ -401,7 +410,7 @@ class Inspekt
      * @param mixed $min
      * @param mixed $max
      * @param boolean $inclusive
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      */
@@ -428,7 +437,7 @@ class Inspekt
      *
      * @param mixed $value
      * @param mixed $type
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      */
@@ -464,7 +473,7 @@ class Inspekt
      * date is required to be in ISO 8601 format.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      */
@@ -480,7 +489,7 @@ class Inspekt
      * This is just like isInt(), except there is no upper limit.
      *
      * @param mixed $value
-     * @return bool
+     * @return boolean
      *
      * @tag validator
      */
@@ -492,24 +501,23 @@ class Inspekt
 	/**
      * Returns TRUE if value is a valid email format, FALSE otherwise.
      *
-     * @param mixed $value
-     * @return mixed
-     * @see RFC 2822 (http://www.ietf.org/rfc/rfc2822.txt)
-     * @todo finish this method
+     * @param string $value
+     * @return boolean
+     * @see http://www.regular-expressions.info/email.html
+     * @see ISPK_EMAIL_VALID
      *
      * @tag validator
      */
 	function isEmail($value)
 	{
-		Inspekt_Error::raiseError('isEmail() has not been implemented.', E_USER_WARNING);
-		return FALSE;
+		return (bool) preg_match(ISPK_EMAIL_VALID, $value);
 	}
 
 	/**
      * Returns TRUE if value is a valid float value, FALSE otherwise.
      *
-     * @param mixed $value
-     * @return mixed
+     * @param string $value
+     * @return boolean
      *
      * @tag validator
      */
@@ -528,7 +536,7 @@ class Inspekt
      *
      * @param mixed $value
      * @param mixed $min
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -543,7 +551,7 @@ class Inspekt
      * otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -562,7 +570,7 @@ class Inspekt
      *
      * @param mixed $value
      * @param integer $allow bitfield for ISPK_HOST_ALLOW_DNS, ISPK_HOST_ALLOW_IP, ISPK_HOST_ALLOW_LOCAL
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -626,7 +634,7 @@ class Inspekt
      * Returns TRUE if value is a valid integer value, FALSE otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -645,7 +653,7 @@ class Inspekt
      * Returns TRUE if value is a valid IP format, FALSE otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -660,7 +668,7 @@ class Inspekt
      *
      * @param mixed $value
      * @param mixed $max
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -674,7 +682,7 @@ class Inspekt
      * Returns TRUE if value is one of $allowed, FALSE otherwise.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -696,7 +704,7 @@ class Inspekt
      * This method requires that the value consist of only digits.
      *
      * @param mixed $value
-     * @return mixed
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -808,7 +816,7 @@ class Inspekt
      * Returns TRUE if value is a valid US ZIP, FALSE otherwise.
      *
      * @param mixed $value
-     * @return bool
+     * @return boolean
      *
      * @tag validator
      * @static
@@ -854,18 +862,4 @@ class Inspekt
 		}
 	}
 }
-
-
-
-
-
-
-/*$d = array();
-$d['input'] = '<funky>yes</funky>';
-$d[] = array('foo', 'bar', 'yes');
-$d['x']['woot'] = array('booyah'=>'bar',
-'ultimate'=>'<strong>hi there!</strong>',
-);*/
-
-//echo "<pre>"; echo var_dump($d); echo "</pre>";
 
