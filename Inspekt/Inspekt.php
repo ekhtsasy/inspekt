@@ -57,6 +57,19 @@ define ('ISPK_HOST_ALLOW_LOCAL', 4);
 define ('ISPK_HOST_ALLOW_ALL',   7);
 
 /**
+ * Options for isUri that specify which types of URIs to allow.
+ *
+ * URI_ALLOW_COMMON: Allow only "common" hostnames: http, https, ftp
+ */
+define ('ISPK_URI_ALLOW_COMMON', 1);
+
+/**
+ * regex used to define what we're calling a valid domain name
+ *
+ */
+define ('ISPK_DNS_VALID', '/^(?:[^\W_]((?:[^\W_]|-){0,61}[^\W_])?\.)+[a-zA-Z]{2,6}\.?$/');
+
+/**
  * regex used to define what we're calling a valid email
  *
  * we're taking a "match 99%" approach here, rather than a strict
@@ -797,19 +810,71 @@ class Inspekt
 	/**
 	 * Enter description here...
 	 *
-	 * @param unknown_type $value
-	 * @return unknown
+	 * @param string $value
+	 * @param integer $mode
+	 * @return boolean
+	 *
+	 * @link http://www.ietf.org/rfc/rfc2396.txt
 	 *
 	 * @tag validator
 	 * @static
 	 */
-	function isUri($value)
+	function isUri($value, $mode=ISPK_URI_ALLOW_COMMON)
 	{
 		/**
          * @todo
          */
-		Inspekt_Error::raiseError('isUri() has not been implemented.', E_USER_WARNING);
-		return FALSE;
+		$regex = '';
+		switch ($mode) {
+
+			// a common absolute URI: ftp, http or https
+			case ISPK_URI_ALLOW_COMMON:
+
+				$regex .= '&';
+				$regex .= '^(ftp|http|https):';					// protocol
+				$regex .= '(//)';								// authority-start
+				$regex .= '([-a-z0-9/~;:@=+$,.!*()\']+@)?';		// userinfo
+				$regex .= '(';
+					$regex .= '((?:[^\W_]((?:[^\W_]|-){0,61}[^\W_])?\.)+[a-zA-Z]{2,6}\.?)';		// domain name
+				$regex .= '|';
+					$regex .= '([0-9]{1,3}(\.[0-9]{1,3})?(\.[0-9]{1,3})?(\.[0-9]{1,3})?)';	// OR ipv4
+				$regex .= ')';
+				$regex .= '(:([0-9]*))?';						// port
+				$regex .= '(/((%[0-9a-f]{2}|[-a-z0-9/~;:@=+$,.!*()\'\&]*)*)/?)?';	// path
+				$regex .= '(\?[^#]*)?';							// query
+				$regex .= '(#([-a-z0-9_]*))?';					// anchor (fragment)
+				$regex .= '$&i';
+				//echo "<pre>"; echo print_r($regex, true); echo "</pre>\n";
+
+				break;
+
+			case ISPK_URI_ALLOW_ABSOLUTE:
+
+				Inspekt_Error::raiseError('isUri() for ISPK_URI_ALLOW_ABSOLUTE has not been implemented.', E_USER_WARNING);
+				return FALSE;
+
+//				$regex .= '&';
+//				$regex .= '^(ftp|http|https):';					// protocol
+//				$regex .= '(//)';								// authority-start
+//				$regex .= '([-a-z0-9/~;:@=+$,.!*()\']+@)?';		// userinfo
+//				$regex .= '(';
+//					$regex .= '((?:[^\W_]((?:[^\W_]|-){0,61}[^\W_])?\.)+[a-zA-Z]{2,6}\.?)';		// domain name
+//				$regex .= '|';
+//					$regex .= '([0-9]{1,3}(\.[0-9]{1,3})?(\.[0-9]{1,3})?(\.[0-9]{1,3})?)';	// OR ipv4
+//				$regex .= ')';
+//				$regex .= '(:([0-9]*))?';						// port
+//				$regex .= '(/((%[0-9a-f]{2}|[-a-z0-9/~;:@=+$,.!*()\'\&]*)*)/?)?';	// path
+//				$regex .= '(\?[^#]*)?';							// query
+//				$regex .= '(#([-a-z0-9_]*))?';					// anchor (fragment)
+//				$regex .= '$&i';
+				//echo "<pre>"; echo print_r($regex, true); echo "</pre>\n";
+
+				break;
+
+		}
+		$result = preg_match($regex, $value, $subpatterns);
+		//echo "<pre>"; echo print_r($subpatterns, true); echo "</pre>\n";
+		return $result;
 	}
 
 	/**
