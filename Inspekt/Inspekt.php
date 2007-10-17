@@ -21,6 +21,11 @@ require_once('Inspekt/Error.php');
  */
 require_once('Inspekt/Cage.php');
 
+/**
+ * Inspekt_Supercage
+ */
+require_once('Inspekt/Supercage.php');
+
 
 /**
  * Options for isHostname() that specify which types of hostnames
@@ -88,16 +93,19 @@ class Inspekt
 	/**
 	 * Returns the $_SERVER data wrapped in an Inspekt_Cage object
 	 *
+	 * This utilizes a singleton pattern to get around scoping issues
+	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 */
-	function makeServerCage() {
+	function makeServerCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_SERVER);
+			$_instance = Inspekt_Cage::Factory($_SERVER, $strict);
 		}
 		$GLOBALS['HTTP_SERVER_VARS'] = NULL;
 		return $_instance;
@@ -109,17 +117,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeGetCage() {
+	function makeGetCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_GET);
+			$_instance = Inspekt_Cage::Factory($_GET, $strict);
 		}
 		$GLOBALS['HTTP_GET_VARS'] = NULL;
 		return $_instance;
@@ -131,17 +140,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makePostCage() {
+	function makePostCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_POST);
+			$_instance = Inspekt_Cage::Factory($_POST, $strict);
 		}
 		$GLOBALS['HTTP_POST_VARS'] = NULL;
 		return $_instance;
@@ -152,17 +162,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeCookieCage() {
+	function makeCookieCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_COOKIE);
+			$_instance = Inspekt_Cage::Factory($_COOKIE, $strict);
 		}
 		$GLOBALS['HTTP_COOKIE_VARS'] = NULL;
 		return $_instance;
@@ -174,17 +185,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeEnvCage() {
+	function makeEnvCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_ENV);
+			$_instance = Inspekt_Cage::Factory($_ENV, $strict);
 		}
 		$GLOBALS['HTTP_ENV_VARS'] = NULL;
 		return $_instance;
@@ -196,17 +208,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeFilesCage() {
+	function makeFilesCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_FILES);
+			$_instance = Inspekt_Cage::Factory($_FILES, $strict);
 		}
 		$GLOBALS['HTTP_POST_FILES'] = NULL;
 		return $_instance;
@@ -218,24 +231,43 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeSessionCage() {
+	function makeSessionCage($strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_SESSION);
+			$_instance = Inspekt_Cage::Factory($_SESSION, $strict);
 		}
 		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
 		return $_instance;
 	}
 
 
+	/**
+	 * Returns a Supercage object, which wraps ALL input superglobals
+	 *
+	 * @param boolean $strict whether or not to nullify the superglobal
+	 * @return Inspekt_Supercage
+	 * @static
+	 */
+	function makeSuperCage($strict=TRUE) {
+		/**
+		 * @staticvar $_instance
+		 */
+		static $_scinstance;
 
+		if (!isset($_scinstance)) {
+			$_scinstance = Inspekt_Supercage::Factory($strict);
+		}
+		return $_scinstance;
+
+	}
 
 
 	/**
