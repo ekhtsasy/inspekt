@@ -8,7 +8,7 @@ $superCage = Inspekt::makeSuperCage();
 
 echo "<pre>"; echo var_dump($superCage); echo "</pre>\n";
 
-echo 'Digits:'.$superCage->server->getDigits('QUERY_STRING').'<p/>';
-echo 'Alpha:'.$superCage->server->getAlpha('QUERY_STRING').'<p/>';
-echo 'Alnum:'.$superCage->server->getAlnum('QUERY_STRING').'<p/>';
-echo 'Raw:'.$superCage->server->getRaw('QUERY_STRING').'<p/>';
+echo 'Digits:'.$superCage->server->getDigits('SERVER_SOFTWARE').'<p/>';
+echo 'Alpha:'.$superCage->server->getAlpha('SERVER_SOFTWARE').'<p/>';
+echo 'Alnum:'.$superCage->server->getAlnum('SERVER_SOFTWARE').'<p/>';
+echo 'Raw:'.$superCage->server->getRaw('SERVER_SOFTWARE').'<p/>';
