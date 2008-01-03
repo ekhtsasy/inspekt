@@ -78,14 +78,15 @@ Class Inspekt_Supercage {
 
 	/**
 	 * Enter description here...
-	 *
+	 * 
+	 * @param string  $config_file
 	 * @param boolean $strict
 	 * @return Inspekt_Supercage
 	 */
-	function Factory($strict = TRUE) {
+	function Factory($config_file = NULL, $strict = TRUE) {
 
 		$sc	= new Inspekt_Supercage();
-		$sc->_makeCages($strict);
+		$sc->_makeCages($strict, $config_file);
 
 		// eliminate the $_REQUEST superglobal
 		if ($strict) {
@@ -100,16 +101,17 @@ Class Inspekt_Supercage {
 	 * Enter description here...
 	 *
 	 * @see Inspekt_Supercage::Factory()
+	 * @param string  $config_file
 	 * @param boolean $strict
 	 */
-	function _makeCages($strict=TRUE) {
-		$this->get	= Inspekt::makeGetCage($strict);
-		$this->post	= Inspekt::makePostCage($strict);
-		$this->cookie	= Inspekt::makeCookieCage($strict);
-		$this->env	= Inspekt::makeEnvCage($strict);
-		$this->files	= Inspekt::makeFilesCage($strict);
-		$this->session= Inspekt::makeSessionCage($strict);
-		$this->server	= Inspekt::makeServerCage($strict);
+	function _makeCages($config_file=NULL, $strict=TRUE) {
+		$this->get		= Inspekt::makeGetCage($config_file, $strict);
+		$this->post		= Inspekt::makePostCage($config_file, $strict);
+		$this->cookie	= Inspekt::makeCookieCage($config_file, $strict);
+		$this->env		= Inspekt::makeEnvCage($config_file, $strict);
+		$this->files	= Inspekt::makeFilesCage($config_file, $strict);
+		$this->session	= Inspekt::makeSessionCage($config_file, $strict);
+		$this->server	= Inspekt::makeServerCage($config_file, $strict);
 	}
 
 }
