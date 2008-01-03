@@ -95,17 +95,18 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 */
-	function makeServerCage($strict=TRUE) {
+	function makeServerCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_SERVER, $strict);
+			$_instance = Inspekt_Cage::Factory($_SERVER, $config_file, '_SERVER', $strict);
 		}
 		$GLOBALS['HTTP_SERVER_VARS'] = NULL;
 		return $_instance;
@@ -117,18 +118,19 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeGetCage($strict=TRUE) {
+	function makeGetCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_GET, $strict);
+			$_instance = Inspekt_Cage::Factory($_GET, $config_file, '_GET', $strict);
 		}
 		$GLOBALS['HTTP_GET_VARS'] = NULL;
 		return $_instance;
@@ -140,18 +142,19 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makePostCage($strict=TRUE) {
+	function makePostCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_POST, $strict);
+			$_instance = Inspekt_Cage::Factory($_POST, $config_file, '_POST', $strict);
 		}
 		$GLOBALS['HTTP_POST_VARS'] = NULL;
 		return $_instance;
@@ -162,18 +165,19 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeCookieCage($strict=TRUE) {
+	function makeCookieCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_COOKIE, $strict);
+			$_instance = Inspekt_Cage::Factory($_COOKIE, $config_file, '_COOKIE', $strict);
 		}
 		$GLOBALS['HTTP_COOKIE_VARS'] = NULL;
 		return $_instance;
@@ -185,18 +189,19 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeEnvCage($strict=TRUE) {
+	function makeEnvCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_ENV, $strict);
+			$_instance = Inspekt_Cage::Factory($_ENV, $config_file, '_ENV', $strict);
 		}
 		$GLOBALS['HTTP_ENV_VARS'] = NULL;
 		return $_instance;
@@ -208,18 +213,19 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeFilesCage($strict=TRUE) {
+	function makeFilesCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_FILES, $strict);
+			$_instance = Inspekt_Cage::Factory($_FILES, $config_file, '_FILES', $strict);
 		}
 		$GLOBALS['HTTP_POST_FILES'] = NULL;
 		return $_instance;
@@ -231,18 +237,23 @@ class Inspekt
 	 *
 	 * This utilizes a singleton pattern to get around scoping issues
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal array
 	 * @return Inspekt_Cage
 	 * @static
 	 */
-	function makeSessionCage($strict=TRUE) {
+	function makeSessionCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_instance;
 
+		if (!isset($_SESSION)) {
+			return NULL;
+		}
+
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_SESSION, $strict);
+			$_instance = Inspekt_Cage::Factory($_SESSION, $config_file, '_SESSION', $strict);
 		}
 		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
 		return $_instance;
@@ -252,18 +263,19 @@ class Inspekt
 	/**
 	 * Returns a Supercage object, which wraps ALL input superglobals
 	 *
+	 * @param string  $config_file
 	 * @param boolean $strict whether or not to nullify the superglobal
 	 * @return Inspekt_Supercage
 	 * @static
 	 */
-	function makeSuperCage($strict=TRUE) {
+	function makeSuperCage($config_file=NULL, $strict=TRUE) {
 		/**
 		 * @staticvar $_instance
 		 */
 		static $_scinstance;
 
 		if (!isset($_scinstance)) {
-			$_scinstance = Inspekt_Supercage::Factory($strict);
+			$_scinstance = Inspekt_Supercage::Factory($strict, $config_file);
 		}
 		return $_scinstance;
 
@@ -285,12 +297,12 @@ class Inspekt
 	function _walkArray($input, $method) {
 
 		if (!is_array($input)) {
-			Inspekt_Error::raiseError('$input must be an array', E_USER_ERROR);
+			user_error('$input must be an array', E_USER_ERROR);
 			return FALSE;
 		}
 
 		if ( !is_callable( array('Inspekt', $method) ) ) {
-			Inspekt_Error::raiseError('$inspektor '.$method.' is invalid', E_USER_ERROR);
+			user_error('$inspektor '.$method.' is invalid', E_USER_ERROR);
 			return FALSE;
 		}
 
@@ -451,10 +463,9 @@ class Inspekt
      * FALSE, then the value must be strictly greater than $min and
      * strictly less than $max.
      *
-     * @param mixed $key
+     * @param mixed $value
      * @param mixed $min
      * @param mixed $max
-     * @param boolean $inclusive
      * @return boolean
      *
      * @tag validator
@@ -623,11 +634,11 @@ class Inspekt
 	function isHostname($value, $allow = ISPK_HOST_ALLOW_ALL)
 	{
 		if (!is_numeric($allow) || !is_int($allow)) {
-			Inspekt_Error::raiseError('Illegal value for $allow; expected an integer', E_USER_WARNING);
+			user_error('Illegal value for $allow; expected an integer', E_USER_WARNING);
 		}
 
 		if ($allow < ISPK_HOST_ALLOW_DNS || ISPK_HOST_ALLOW_ALL < $allow) {
-			Inspekt_Error::raiseError('Illegal value for $allow; expected integer between ' . ISPK_HOST_ALLOW_DNS . ' and ' . ISPK_HOST_ALLOW_ALL, E_USER_WARNING);
+			user_error('Illegal value for $allow; expected integer between ' . ISPK_HOST_ALLOW_DNS . ' and ' . ISPK_HOST_ALLOW_ALL, E_USER_WARNING);
 		}
 
 		// determine whether the input is formed as an IP address
@@ -647,7 +658,7 @@ class Inspekt
 		// check input against domain name schema
 		$status = @preg_match('/^(?:[^\W_]((?:[^\W_]|-){0,61}[^\W_])?\.)+[a-zA-Z]{2,6}\.?$/', $value);
 		if ($status === false) {
-			Inspekt_Error::raiseError('Internal error: DNS validation failed', E_USER_WARNING);
+			user_error('Internal error: DNS validation failed', E_USER_WARNING);
 		}
 
 		// if the input passes as an Internet domain name, and domain names are allowed, then the hostname
@@ -665,7 +676,7 @@ class Inspekt
 		$status = @preg_match('/^(?:[^\W_](?:[^\W_]|-){0,61}[^\W_]\.)*(?:[^\W_](?:[^\W_]|-){0,61}[^\W_])\.?$/',
 		$value);
 		if ($status === FALSE) {
-			Inspekt_Error::raiseError('Internal error: local network name validation failed', E_USER_WARNING);
+			user_error('Internal error: local network name validation failed', E_USER_WARNING);
 		}
 
 		if ($status == 0) {
@@ -816,7 +827,7 @@ class Inspekt
 				return in_array($areaCode, $areaCodes);
 				break;
 			default:
-				Inspekt_Error::raiseError('isPhone() does not yet support this country.', E_USER_WARNING);
+				user_error('isPhone() does not yet support this country.', E_USER_WARNING);
 				return FALSE;
 				break;
 		}
@@ -882,7 +893,7 @@ class Inspekt
 
 			case ISPK_URI_ALLOW_ABSOLUTE:
 
-				Inspekt_Error::raiseError('isUri() for ISPK_URI_ALLOW_ABSOLUTE has not been implemented.', E_USER_WARNING);
+				user_error('isUri() for ISPK_URI_ALLOW_ABSOLUTE has not been implemented.', E_USER_WARNING);
 				return FALSE;
 
 //				$regex .= '&';

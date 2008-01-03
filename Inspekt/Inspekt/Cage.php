@@ -24,13 +24,16 @@ class Inspekt_Cage
 	/**
 	 * {@internal The raw source data.  Although tempting, NEVER EVER
 	 * EVER access the data directly using this property!  Unfortunately,
-	 * we can't deny access to this in PHP4}
+	 * we can't deny access to this in PHP4}}
 	 *
 	 * Don't try to access this.  ever.
 	 *
 	 * @var array
 	 */
 	var $_source = NULL;
+
+
+	var $_autofilter_conf = NULL;
 
 
 	/**
@@ -49,15 +52,17 @@ class Inspekt_Cage
      * accessed via the object's accessor methods
 	 *
      * @param array $source
+     * @param string $conf_file
+     * @param string $conf_section
      * @param boolean $strict
      * @return Inspekt_Cage
      *
      * @static
      */
-	function Factory(&$source, $strict = TRUE) {
+	function Factory(&$source, $conf_file = NULL, $conf_section = NULL, $strict = TRUE) {
 
 		if (!is_array($source)) {
-			Inspekt_Error::raiseError('$source is not an array', E_USER_ERROR);
+			user_error('$source '.$source.' is not an array', E_USER_NOTICE);
 		}
 
 		$cage = new Inspekt_Cage();
@@ -67,6 +72,21 @@ class Inspekt_Cage
 			$source = NULL;
 		}
 
+		if (isset($conf_file)) {
+			echo "<pre>"; var_dump($conf_file); echo "</pre>";
+			
+			$conf = parse_ini_file($conf_file, true);
+			if ($conf_section) {
+				if (isset($conf[$conf_section])) {
+					$cage->_autofilter_conf = $conf[$conf_section];
+				}
+			} else {
+				$cage->_autofilter_conf = $conf;
+			}
+
+			$cage->_applyAutoFilters();
+		}
+
 		return $cage;
 	}
 
@@ -74,7 +94,7 @@ class Inspekt_Cage
 
 
 	/**
-	 * {@internal we use this to set the data array in Factory()}
+	 * {@internal we use this to set the data array in Factory()}}
 	 *
 	 * @see Factory()
 	 * @param array $newsource
@@ -82,10 +102,50 @@ class Inspekt_Cage
 	function _setSource(&$newsource) {
 
 		if (!is_array($newsource)) {
-			Inspekt_Error::raiseError('$source is not an array', E_USER_ERROR);
+			user_error('$source is not an array', E_USER_NOTICE);
 		}
 
 		$this->_source = $newsource;
+	}
+
+
+
+	function _applyAutoFilters() {
+
+		if ( isset($this->_autofilter_conf) && is_array($this->_autofilter_conf)) {
+
+			foreach($this->_autofilter_conf as $key=>$filters) {
+
+				// get universal filter key
+				if ($key == '*') {
+
+					// get filters for this key
+					$uni_filters = explode(',', $this->_autofilter_conf[$key]);
+					array_walk($uni_filters, 'trim');
+
+					// apply uni filters
+					foreach($uni_filters as $this_filter) {
+						foreach($this->_source as $key=>$val) {
+							$this->_source[$key] = $this->$this_filter($key);
+						}
+					}
+//					echo "<pre>UNI FILTERS"; echo var_dump($this->_source); echo "</pre>\n";
+
+				} elseif($val = $this->keyExists($key)) {
+
+					// get filters for this key
+					$filters = explode(',', $this->_autofilter_conf[$key]);
+					array_walk($filters, 'trim');
+
+					// apply filters
+					foreach($filters as $this_filter) {
+						$this->_setValue($key, $this->$this_filter($key));
+					}
+//					echo "<pre> Filter $this_filter/$key: "; echo var_dump($this->_source); echo "</pre>\n";
+
+				}
+			}
+		}
 	}
 
 
@@ -253,7 +313,7 @@ class Inspekt_Cage
      * @param mixed $key
      * @param mixed $min
      * @param mixed $max
-     * @param boolean $inclusive
+     * @param boolean $inc
      * @return mixed
      *
      * @tag validator
@@ -679,6 +739,12 @@ class Inspekt_Cage
 	}
 
 
+	/**
+	 * Retrieves a value from the _source array
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	function _getValue($key) {
 		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR)!== FALSE) {
 			$key = trim($key, ISPK_ARRAY_PATH_SEPARATOR);
@@ -704,6 +770,46 @@ class Inspekt_Cage
 			} elseif ( is_array($data_array[$thiskey]) ) {
 				unset($keys[key($keys)]);
 				return $this->_getValueRecursive($keys, $data_array[$thiskey]);
+			}
+		} else { // if any key DNE, return false
+			return false;
+		}
+	}
+
+
+	/**
+	 * Sets a value in the _source array
+	 *
+	 * @param mixed $key
+	 * @param mixed $val
+	 * @return mixed
+	 */
+	function _setValue($key, $val) {
+		if (strpos($key, ISPK_ARRAY_PATH_SEPARATOR)!== FALSE) {
+			$key = trim($key, ISPK_ARRAY_PATH_SEPARATOR);
+			$keys = explode(ISPK_ARRAY_PATH_SEPARATOR, $key);
+			return $this->_setValueRecursive($keys, $this->_source);
+		} else {
+			$this->_source[$key] = $val;
+			return $this->_source[$key];
+		}
+	}
+
+
+	function _setValueRecursive($keys, $val, $data_array) {
+		$thiskey = current($keys);
+
+		if (is_numeric($thiskey)) { // force numeric strings to be integers
+			$thiskey = (int)$thiskey;
+		}
+
+		if ( array_key_exists($thiskey, $data_array) ) {
+			if (sizeof($keys) == 1) {
+				$data_array[$thiskey] = $val;
+				return $data_array[$thiskey];
+			} elseif ( is_array($data_array[$thiskey]) ) {
+				unset($keys[key($keys)]);
+				return $this->_setValueRecursive($keys, $val, $data_array[$thiskey]);
 			}
 		} else { // if any key DNE, return false
 			return false;
