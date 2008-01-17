@@ -1,5 +1,5 @@
 #summary A set of examples and explanations to get started using Inspekt
-#labels Featured,documentation
+#labels documentation
 
 =THIS INFORMATION IS DEPRECATED. VISIT [DocsAndSupport] FOR UP-TO-DATE DOCUMENTATION=
 
@@ -129,8 +129,6 @@ var_dump($cage1 === $cage2 && $cage2 === $cage3);
 
 
 {coming soon}
-
-
 
 
 
