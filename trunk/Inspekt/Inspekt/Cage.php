@@ -16,6 +16,8 @@ require_once 'Inspekt.php';
 
 define ('ISPK_ARRAY_PATH_SEPARATOR', '/');
 
+define ('ISPK_RECURSION_MAX', 10);
+
 /**
  * @package Inspekt
  */
@@ -757,7 +759,7 @@ class Inspekt_Cage
 
 
 
-	function _getValueRecursive($keys, $data_array) {
+	function _getValueRecursive($keys, $data_array, $level=0) {
 		$thiskey = current($keys);
 
 		if (is_numeric($thiskey)) { // force numeric strings to be integers
@@ -768,8 +770,13 @@ class Inspekt_Cage
 			if (sizeof($keys) == 1) {
 				return $data_array[$thiskey];
 			} elseif ( is_array($data_array[$thiskey]) ) {
-				unset($keys[key($keys)]);
-				return $this->_getValueRecursive($keys, $data_array[$thiskey]);
+				if ($level < ISPK_RECURSION_MAX) {
+					unset($keys[key($keys)]);
+					return $this->_getValueRecursive($keys, $data_array[$thiskey], $level+1);
+				} else {
+					trigger_error('Recursion limit met', E_USER_WARNING);
+					return false;
+				}
 			}
 		} else { // if any key DNE, return false
 			return false;
@@ -796,7 +803,7 @@ class Inspekt_Cage
 	}
 
 
-	function _setValueRecursive($keys, $val, $data_array) {
+	function _setValueRecursive($keys, $val, $data_array, $level=0) {
 		$thiskey = current($keys);
 
 		if (is_numeric($thiskey)) { // force numeric strings to be integers
@@ -808,8 +815,13 @@ class Inspekt_Cage
 				$data_array[$thiskey] = $val;
 				return $data_array[$thiskey];
 			} elseif ( is_array($data_array[$thiskey]) ) {
-				unset($keys[key($keys)]);
-				return $this->_setValueRecursive($keys, $val, $data_array[$thiskey]);
+				if ($level < ISPK_RECURSION_MAX) {
+					unset($keys[key($keys)]);
+					return $this->_setValueRecursive($keys, $val, $data_array[$thiskey], $level+1);
+				} else {
+					trigger_error('Recursion limit met', E_USER_WARNING);
+					return false;
+				}
 			}
 		} else { // if any key DNE, return false
 			return false;

@@ -7,8 +7,8 @@ Ed Finkler
 <http://inspekt.org>
 <http://code.google.com/p/inspekt/>
 
-Version 0.2.0
-2007-10-16
+Version 0.3.0
+2008-01-16
 
 PLEASE NOTE: Inspekt is early in development, and the API should not be considered stable.
 
@@ -20,8 +20,9 @@ Development of Inspekt is funded by OWASP's Spring of Code 2007.
 <http://owasp.org>
 
 
-### HOW DO I USE INSPEKT?
-Coming soon.  You can check the Examples directory for a little help.
+### HOW DO I USE INSPEKT? Check the user docs at
+http://funkatron.com/inspekt/user_docs or the API docs at
+http://funkatron.com/inspekt/api_docs
 
 
 ### THIS LOOKS A LOT LIKE THE OLD ZEND_FILTER COMPONENT FROM THE ZEND FRAMEWORK
