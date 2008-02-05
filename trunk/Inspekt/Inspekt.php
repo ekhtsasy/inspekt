@@ -22,6 +22,11 @@ require_once('Inspekt/Error.php');
 require_once('Inspekt/Cage.php');
 
 /**
+ * Inspekt_Cage_Session
+ */
+require_once('Inspekt/Cage/Session.php');
+
+/**
  * Inspekt_Supercage
  */
 require_once('Inspekt/Supercage.php');
@@ -243,6 +248,9 @@ class Inspekt
 	 * @static
 	 */
 	function makeSessionCage($config_file=NULL, $strict=TRUE) {
+		
+		trigger_error('makeSessionCage is disabled in this version', E_USER_ERROR);
+		
 		/**
 		 * @staticvar $_instance
 		 */
@@ -253,7 +261,7 @@ class Inspekt
 		}
 
 		if (!isset($_instance)) {
-			$_instance = Inspekt_Cage::Factory($_SESSION, $config_file, '_SESSION', $strict);
+			$_instance = Inspekt_Cage_Session::Factory($_SESSION, $config_file, '_SESSION', $strict);
 		}
 		$GLOBALS['HTTP_SESSION_VARS'] = NULL;
 		return $_instance;
