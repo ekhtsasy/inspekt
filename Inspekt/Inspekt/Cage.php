@@ -69,29 +69,17 @@ class Inspekt_Cage
 
 		$cage = new Inspekt_Cage();
 		$cage->_setSource($source);
+		$cage->_parseAndApplyAutoFilters($conf);
 
 		if ($strict) {
 			$source = NULL;
 		}
 
-		if (isset($conf_file)) {
-			echo "<pre>"; var_dump($conf_file); echo "</pre>";
-			
-			$conf = parse_ini_file($conf_file, true);
-			if ($conf_section) {
-				if (isset($conf[$conf_section])) {
-					$cage->_autofilter_conf = $conf[$conf_section];
-				}
-			} else {
-				$cage->_autofilter_conf = $conf;
-			}
-
-			$cage->_applyAutoFilters();
-		}
-
 		return $cage;
 	}
 
+
+	
 
 
 
@@ -111,6 +99,24 @@ class Inspekt_Cage
 	}
 
 
+	function _parseAndApplyAutoFilters($conf)
+	{
+		if (isset($conf_file)) {
+			//echo "<pre>"; var_dump($conf_file); echo "</pre>";
+			
+			$conf = parse_ini_file($conf_file, true);
+			if ($conf_section) {
+				if (isset($conf[$conf_section])) {
+					$this->_autofilter_conf = $conf[$conf_section];
+				}
+			} else {
+				$this->_autofilter_conf = $conf;
+			}
+
+			$this->_applyAutoFilters();
+		}
+	}
+	
 
 	function _applyAutoFilters() {
 

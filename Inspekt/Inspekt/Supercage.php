@@ -110,7 +110,7 @@ Class Inspekt_Supercage {
 		$this->cookie	= Inspekt::makeCookieCage($config_file, $strict);
 		$this->env		= Inspekt::makeEnvCage($config_file, $strict);
 		$this->files	= Inspekt::makeFilesCage($config_file, $strict);
-		$this->session	= Inspekt::makeSessionCage($config_file, $strict);
+		// $this->session	= Inspekt::makeSessionCage($config_file, $strict);
 		$this->server	= Inspekt::makeServerCage($config_file, $strict);
 	}
 
